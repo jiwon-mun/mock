@@ -30,13 +30,15 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
       SELECT
         id,
         created_at,
-        modified_at,
         pros,
         cons,
         tip,
         rating,
         is_recommended,
         product_id,
+        product_name,
+        product_image,
+        brand_name,
         user_id,
         nickname,
         tags
@@ -53,7 +55,6 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
       reviews.rows.map((r) => ({
         id: r.id,
         created_at: r.created_at,
-        modified_at: r.modified_at,
         pros: r.pros,
         cons: r.cons,
         tip: r.tip,
@@ -61,6 +62,12 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
         is_recommended: r.is_recommended,
         product: {
           id: r.product_id,
+          name: r.product_name,
+          image: r.product_image,
+        },
+        brand: {
+          id: r.brand_id,
+          name: r.brand_name,
         },
         user: {
           id: r.user_id,
@@ -76,9 +83,20 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
 });
 
 // POST /reviews
-
+// curl -X POST http://localhost:5432/reviews \
+//   -H "Content-Type: application/json" \
+//   -d '{
+//     "pros": "Great product, works well.",
+//     "cons": "A bit pricey.",
+//     "tip": "Use it regularly for best results.",
+//     "rating": 4,
+//     "is_recommended": true,
+//     "product_id": 123,
+//     "user_id": 456,
+//     "nickname": "john_doe",
+//     "tags": ["US", "30s", "SensitiveSkin"]
+//   }'
 router.post("/", async (req: Request, res: Response): Promise<any> => {
-  console.log("req.body::", req.body);
   const {
     pros,
     cons,
@@ -86,20 +104,36 @@ router.post("/", async (req: Request, res: Response): Promise<any> => {
     rating,
     is_recommended,
     product_id,
+    product_name,
+    product_image,
+    brand_id,
+    brand_name,
     user_id,
     nickname,
     tags,
   } = req.body;
 
-  if (!pros || !cons || !rating || !product_id || !user_id || !nickname) {
+  // 필수 파라미터 검사
+  if (
+    !pros ||
+    !cons ||
+    !rating ||
+    !product_id ||
+    !user_id ||
+    !nickname ||
+    !product_name ||
+    !product_image ||
+    !brand_id ||
+    !brand_name
+  ) {
     return res.status(400).send("Missing required fields");
   }
 
   try {
     const result = await db.query(
       `
-      INSERT INTO reviews (pros, cons, tip, rating, is_recommended, product_id, user_id, nickname, tags)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      INSERT INTO reviews (pros, cons, tip, rating, is_recommended, product_id, product_name, product_image, brand_id, brand_name, user_id, nickname, tags)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
       RETURNING id
     `,
       [
@@ -109,6 +143,10 @@ router.post("/", async (req: Request, res: Response): Promise<any> => {
         rating,
         is_recommended,
         product_id,
+        product_name,
+        product_image,
+        brand_id,
+        brand_name,
         user_id,
         nickname,
         tags,
@@ -122,23 +160,22 @@ router.post("/", async (req: Request, res: Response): Promise<any> => {
   }
 });
 
-// DELETE /reviews/:id
-router.delete("/:id", async (req: Request, res: Response): Promise<any> => {
-  const id = parseInt(req.params.id, 10);
-  if (isNaN(id)) {
-    return res.status(400).send("Invalid ID");
-  }
-
-  try {
-    const result = await db.query("DELETE FROM reviews WHERE id = $1", [id]);
-    if (result.rowCount === 0) {
-      return res.status(404).send("Review not found");
-    }
-    res.status(204).send(); // No Content
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Error deleting review");
-  }
-});
+// curl -X POST "http://localhost:5432/reviews" \
+//   -H "Content-Type: application/json" \
+//   -d '{
+//     "pros": "Great product, works well.",
+//     "cons": "A bit pricey.",
+//     "tip": "Use it regularly for best results.",
+//     "rating": 4,
+//     "is_recommended": true,
+//     "product_id": 123,
+//     "product_name": "Super Product",
+//     "product_image": "https://placehold.co/180x180/orange/white",
+//     "brand_id": 789,
+//     "brand_name": "SuperBrand",
+//     "user_id": 456,
+//     "nickname": "john_doe",
+//     "tags": ["US", "30s", "SensitiveSkin"]
+//   }'
 
 export default router;
