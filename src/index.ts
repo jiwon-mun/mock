@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import reviewsRouter from "./routes/reviews";
+import reportsRouter from "./routes/reports";
 import { initDB } from "./db/init";
 import cors from "cors";
 
@@ -19,7 +20,7 @@ dotenv.config();
 
   // 유저 관련 API 등록
   app.use("/reviews", reviewsRouter);
-
+  app.use("/report-reasons", reportsRouter);
   app.get("/", (req, res) => {
     res.send("Hello from Node.js + PostgreSQL + TypeScript API Server!");
   });
