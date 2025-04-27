@@ -30,6 +30,7 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
       SELECT
         id,
         created_at,
+        modified_at,
         pros,
         cons,
         tip,
@@ -38,9 +39,15 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
         product_id,
         product_name,
         product_image,
+        brand_id,
         brand_name,
         user_id,
         nickname,
+        email_id,
+        image_url,
+        profile_options,
+        is_validated,
+        is_ggom_event,
         tags
       FROM reviews
       ${whereClause}
@@ -55,6 +62,7 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
       reviews.rows.map((r) => ({
         id: r.id,
         created_at: r.created_at,
+        modified_at: r.modified_at,
         pros: r.pros,
         cons: r.cons,
         tip: r.tip,
@@ -64,14 +72,19 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
           id: r.product_id,
           name: r.product_name,
           image: r.product_image,
-        },
-        brand: {
-          id: r.brand_id,
-          name: r.brand_name,
+          brand: {
+            id: r.brand_id,
+            name: r.brand_name,
+          },
         },
         user: {
           id: r.user_id,
           nickname: r.nickname,
+          email_id: r.email_id,
+          image_url: r.image_url,
+          profile_options: r.profile_options,
+          is_validated: r.is_validated,
+          is_ggom_event: r.is_ggom_event,
         },
         tags: r.tags,
       }))
@@ -82,21 +95,31 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
   }
 });
 
-// POST /reviews
-// curl -X POST http://localhost:5432/reviews \
+// curl -X POST "http://localhost:5432/reviews" \
 //   -H "Content-Type: application/json" \
 //   -d '{
-//     "pros": "Great product, works well.",
-//     "cons": "A bit pricey.",
+//     "pros": "Great product, works well and lasts a long time.",
+//     "cons": "A bit expensive, but worth the price.",
 //     "tip": "Use it regularly for best results.",
 //     "rating": 4,
 //     "is_recommended": true,
 //     "product_id": 123,
+//     "product_name": "Super Product",
+//     "product_image": "https://placehold.co/180x180/blue/white",
+//     "brand_id": 789,
+//     "brand_name": "SuperBrand",
 //     "user_id": 456,
 //     "nickname": "john_doe",
-//     "tags": ["US", "30s", "SensitiveSkin"]
+//     "email_id": "john.doe@example.com",
+//     "image_url": "https://placehold.co/100x100/green/white",
+//     "profile_options": ["US", "30s", "SensitiveSkin"],
+//     "is_validated": true,
+//     "is_ggom_event": false,
+//     "tags": ["Tag1", "Tag2"]
 //   }'
+
 router.post("/", async (req: Request, res: Response): Promise<any> => {
+  console.log("req.body::", req.body);
   const {
     pros,
     cons,
@@ -110,30 +133,30 @@ router.post("/", async (req: Request, res: Response): Promise<any> => {
     brand_name,
     user_id,
     nickname,
+    email_id,
+    image_url,
+    profile_options,
+    is_validated,
+    is_ggom_event,
     tags,
   } = req.body;
 
-  // 필수 파라미터 검사
-  if (
-    !pros ||
-    !cons ||
-    !rating ||
-    !product_id ||
-    !user_id ||
-    !nickname ||
-    !product_name ||
-    !product_image ||
-    !brand_id ||
-    !brand_name
-  ) {
+  console.log("req.body::", req.body);
+
+  if (!pros || !cons || !rating || !product_id || !user_id || !nickname) {
     return res.status(400).send("Missing required fields");
   }
 
   try {
     const result = await db.query(
       `
-      INSERT INTO reviews (pros, cons, tip, rating, is_recommended, product_id, product_name, product_image, brand_id, brand_name, user_id, nickname, tags)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+      INSERT INTO reviews (
+        pros, cons, tip, rating, is_recommended, 
+        product_id, product_name, product_image, brand_id, brand_name, 
+        user_id, nickname, email_id, image_url, profile_options, 
+        is_validated, is_ggom_event, tags
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
       RETURNING id
     `,
       [
@@ -149,6 +172,11 @@ router.post("/", async (req: Request, res: Response): Promise<any> => {
         brand_name,
         user_id,
         nickname,
+        email_id,
+        image_url,
+        profile_options,
+        is_validated,
+        is_ggom_event,
         tags,
       ]
     );
@@ -159,23 +187,5 @@ router.post("/", async (req: Request, res: Response): Promise<any> => {
     res.status(500).send("Error creating review");
   }
 });
-
-// curl -X POST "http://localhost:5432/reviews" \
-//   -H "Content-Type: application/json" \
-//   -d '{
-//     "pros": "Great product, works well.",
-//     "cons": "A bit pricey.",
-//     "tip": "Use it regularly for best results.",
-//     "rating": 4,
-//     "is_recommended": true,
-//     "product_id": 123,
-//     "product_name": "Super Product",
-//     "product_image": "https://placehold.co/180x180/orange/white",
-//     "brand_id": 789,
-//     "brand_name": "SuperBrand",
-//     "user_id": 456,
-//     "nickname": "john_doe",
-//     "tags": ["US", "30s", "SensitiveSkin"]
-//   }'
 
 export default router;

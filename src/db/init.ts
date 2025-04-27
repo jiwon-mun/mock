@@ -5,7 +5,7 @@ export const initDB = async () => {
     // await db.query(`DROP TABLE IF EXISTS reviews;`);
 
     await db.query(`
-        CREATE TABLE IF NOT EXISTS reviews (
+      CREATE TABLE IF NOT EXISTS reviews (
         id SERIAL PRIMARY KEY,
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         modified_at TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -15,14 +15,19 @@ export const initDB = async () => {
         rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
         is_recommended BOOLEAN NOT NULL,
         product_id INTEGER NOT NULL,
+        product_name TEXT NOT NULL,
+        product_image TEXT NOT NULL,
+        brand_id INTEGER NOT NULL,
+        brand_name TEXT NOT NULL,
         user_id INTEGER NOT NULL,
         nickname TEXT NOT NULL,
-        tags TEXT[], -- tags는 문자열 배열로 처리
-        product_name TEXT NOT NULL, -- 제품명
-        product_image TEXT NOT NULL, -- 제품 이미지
-        brand_id INTEGER NOT NULL, -- 브랜드 ID (참고용)
-        brand_name TEXT NOT NULL -- 브랜드명
-        )
+        email_id TEXT NOT NULL,  -- email_id 추가
+        image_url TEXT NOT NULL, -- image_url 추가
+        profile_options TEXT[],  -- tags -> profile_options로 변경
+        is_validated BOOLEAN NOT NULL, -- is_validated 추가
+        is_ggom_event BOOLEAN NOT NULL, -- is_ggom_event 추가
+        tags TEXT[] -- 기존의 tags는 그대로 유지
+      );
     `);
 
     // 인덱스 생성
