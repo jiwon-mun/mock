@@ -13,8 +13,11 @@ dotenv.config();
   // CORS 미들웨어 사용 (모든 도메인 허용)
 
   const app = express();
+
   const port = process.env.PORT || 3000;
   app.use(cors());
+  app.use(express.json()); // JSON 형태의 body를 파싱
+  app.use(express.urlencoded({ extended: true })); // x-www-form-urlencoded 형태의 body를 파싱
 
   app.use(express.json());
 

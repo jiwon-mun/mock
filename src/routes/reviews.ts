@@ -142,8 +142,6 @@ router.post("/", async (req: Request, res: Response): Promise<any> => {
     tags,
   } = req.body;
 
-  console.log("req.body::", req.body);
-
   if (!pros || !cons || !rating || !product_id || !user_id || !nickname) {
     return res.status(400).send("Missing required fields");
   }
