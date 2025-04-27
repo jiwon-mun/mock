@@ -83,9 +83,10 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
           email_id: r.email_id,
           image_url: r.image_url,
           profile_options: r.profile_options,
-          is_validated: r.is_validated,
-          is_ggom_event: r.is_ggom_event,
         },
+        is_validated: r.is_validated,
+        is_ggom_event: r.is_ggom_event,
+
         tags: r.tags,
       }))
     );
