@@ -16,8 +16,8 @@ dotenv.config();
 
   const port = process.env.PORT || 3000;
   app.use(cors());
-  app.use(express.json()); // JSON 형태의 body를 파싱
-  app.use(express.urlencoded({ extended: true })); // x-www-form-urlencoded 형태의 body를 파싱
+  // app.use(express.json()); // JSON 형태의 body를 파싱
+  // app.use(express.urlencoded({ extended: true })); // x-www-form-urlencoded 형태의 body를 파싱
 
   app.use(express.json());
 

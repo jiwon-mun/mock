@@ -187,23 +187,6 @@
 #     "tags": ["Lotion", "Lightweight", "OilySkin"]
 # }'
 
-curl -X POST "http://localhost:5432/reviews" -H "Content-Type: application/json" -d '{
-    "pros": "Very lightweight and absorbs fast.",
-    "cons": "Not as hydrating as expected for dry skin.",
-    "tip": "Best for those with oily skin.",
-    "rating": 4,
-    "is_recommended": true,
-    "product_id": 753,
-    "product_name": "LightGlow Lotion",
-    "product_image": "https://placehold.co/180x180/blue/white",
-    "brand_id": 209,
-    "brand_name": "LightSkin",
-    "user_id": 309,
-    "nickname": "lightlover99",
-    "email_id": "lightlover99@example.com",
-    "image_url": "https://placehold.co/100x100/blue/white",
-    "profile_options": ["Italy", "25s", "OilySkin", "Lotion", "Lightweight", "SensitiveSkin", "DryHair"],
-    "is_validated": false,
-    "is_ggom_event": false,
-    "tags": ["Lotion", "Lightweight", "OilySkin"]
-}'
+curl -X POST "http://localhost:3000/reviews" \
+  -H "Content-Type: application/json" \
+  -d "{\"pros\":\"Very lightweight and absorbs fast. But not as hydrating as expected for dry skin. Somewhat greasy for oily skin. And Then it's not good for sensitive skin. And it's not good for dry hair.\",\"cons\":\"Not as hydrating as expected for dry skin.\",\"tip\":\"Best for those with oily skin.\",\"rating\":4,\"is_recommended\":true,\"product_id\":753,\"product_name\":\"LightGlow Lotion\",\"product_image\":\"https://placehold.co/180x180/blue/white\",\"brand_id\":209,\"brand_name\":\"LightSkin\",\"user_id\":309,\"nickname\":\"lightlover99\",\"email_id\":\"lightlover99@example.com\",\"image_url\":\"https://placehold.co/100x100/blue/white\",\"profile_options\":[\"Italy\",\"25s\",\"OilySkin\",\"Lotion\",\"Lightweight\",\"SensitiveSkin\",\"DryHair\"],\"is_validated\":false,\"is_ggom_event\":false,\"tags\":[\"Lotion\",\"Lightweight\",\"OilySkin\"]}"

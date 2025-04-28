@@ -180,10 +180,10 @@ router.post("/", async (req: Request, res: Response): Promise<any> => {
       ]
     );
 
-    res.status(201).json({ id: result.rows[0].id });
+    return res.status(201).json({ id: result.rows[0].id });
   } catch (error) {
     console.error(error);
-    res.status(500).send("Error creating review");
+    return res.status(500).send("Error creating review");
   }
 });
 
